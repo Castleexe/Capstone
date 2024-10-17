@@ -18,13 +18,13 @@ def flip(sprites):
     return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
 
 def load_sprite_sheets(dir1, dir2, width, height, direction=False):
-    path = join("assests", dir1, dir2)
+    path = join("assets", dir1, dir2)
     images = [f for f in listdir(path) if isfile(join(path, f))] #load every file that is in the dir
 
     all_sprites = {}
 
     for image in images:
-        sprite_sheet = pygame.image.load(join(path, image)).convert_alpha
+        sprite_sheet = pygame.image.load(join(path, image)).convert_alpha()
 
         sprites = []
         #load each frame
