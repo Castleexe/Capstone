@@ -14,23 +14,87 @@ class Agent:
         self.epsilon = 0 #randomness
         self.gamma = 0 #discount rate  
         self.memory = deque(maxlen=MAX_MEMORY) #popleft() automatically remove elements if memory full
-        # TODO: model, trainer
+        self.model = None #TODO
+        self.trainer = None #TODO
 
 
     def get_state(self, game):
-        pass
+        head = game.snake[0]
+        #points used to check danger
+        point_l = Point(head.x - 20, head.y) 
+        point_r = Point(head.x + 20, head.y)
+        point_u = Point(head.x, head.y - 20)
+        point_d = Point(head.x, head.y + 20)
+        
+        dir_l = game.direction == Direction.LEFT
+        dir_r = game.direction == Direction.RIGHT
+        dir_u = game.direction == Direction.UP
+        dir_d = game.direction == Direction.DOWN
+
+        state = [
+            # Danger straight
+            (dir_r and game.is_collision(point_r)) or 
+            (dir_l and game.is_collision(point_l)) or 
+            (dir_u and game.is_collision(point_u)) or 
+            (dir_d and game.is_collision(point_d)),
+
+            # Danger right
+            (dir_u and game.is_collision(point_r)) or 
+            (dir_d and game.is_collision(point_l)) or 
+            (dir_l and game.is_collision(point_u)) or 
+            (dir_r and game.is_collision(point_d)),
+
+            # Danger left
+            (dir_d and game.is_collision(point_r)) or 
+            (dir_u and game.is_collision(point_l)) or 
+            (dir_r and game.is_collision(point_u)) or 
+            (dir_l and game.is_collision(point_d)),
+            
+            # Move direction
+            dir_l,
+            dir_r,
+            dir_u,
+            dir_d,
+            
+            # Food location 
+            game.food.x < game.head.x,  # food left
+            game.food.x > game.head.x,  # food right
+            game.food.y < game.head.y,  # food up
+            game.food.y > game.head.y  # food down
+            ]
+
+        return np.array(state, dtype=int)
 
     def remember(self, state, action, reward, next_state, game_over):
-        pass
+        self.memory.append((state, action, reward, next_state, game_over))
     
     def train_long_memory(self):
-        pass
-    
+        if len(self.memory) > BATCH_SIZE:
+            mini_sample = random.sample(self.memory, BATCH_SIZE) #list of tuples 
+        else:
+            mini_sample = self.memory   
+        
+        states, actions, rewards, next_states, game_overs = zip(*mini_sample) #creates vars for each arg, zip func splits data
+        self.trainer.train_Step(states, actions, rewards, next_states, game_overs)
+
     def train_short_memory(self, state, action, reward, next_state, game_over):
-        pass
+        self.trainer.train_Step(state, action, reward, next_state, game_over)
 
     def get_action(self, state):
-        pass
+        #do random moves: trade off between exploration / exploitation
+        self.epsilon = 80 - self.n_games
+        final_move = [0,0,0]
+        #more games, less randomness
+        if random.randint(0,200) < self.epsilon:
+            move = random.randint(0,2) 
+            final_move[move] = 1
+        else:
+            state0 = torch.tensor(state, dtype=torch.float)
+            prediction = self.model.predict(state0)
+            move = torch.argmax(prediction).item()
+            final_move[move] = 1    
+            
+        return final_move
 
 def train():
     plot_scores = []
