@@ -77,10 +77,10 @@ class Agent:
             mini_sample = self.memory   
         
         states, actions, rewards, next_states, game_overs = zip(*mini_sample) #creates vars for each arg, zip func splits data
-        self.trainer.train_Step(states, actions, rewards, next_states, game_overs)
+        self.trainer.train_step(states, actions, rewards, next_states, game_overs)
 
     def train_short_memory(self, state, action, reward, next_state, game_over):
-        self.trainer.train_Step(state, action, reward, next_state, game_over)
+        self.trainer.train_step(state, action, reward, next_state, game_over)
 
     def get_action(self, state):
         #do random moves: trade off between exploration / exploitation

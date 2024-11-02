@@ -8,7 +8,7 @@ class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidde_size, output_size):
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidde_size)
-        self.linear2 = nn.Lienar(hidde_size, output_size)
+        self.linear2 = nn.Linear(hidde_size, output_size)
 
     def forward(self, x):
         x = F.relu(self.linear1(x))
@@ -57,7 +57,7 @@ class QTrainer:
             if not game_over[index]:
                 Q_new = reward[index] + self.gamma * torch.max(self.model(next_state[index]))
 
-            target[index][torch.argmax(action.item())] = Q_new
+            target[index][torch.argmax(action[index]).item()] = Q_new
 
         #2 Q_new = r + y * max(next_predicted q value) -> only do this if not done
         # pred.clone()
