@@ -5,6 +5,7 @@ from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from helper import plot
+import game_human
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -100,13 +101,10 @@ class Agent:
         return final_move
 
 def train(aiVersion='model/model1100.pth'):
-    plot_scores = []
-    plot_mean_scores = []
-    total_score = 0
     record = 0
     name = "model/model" + aiVersion + ".pth"
     agent = Agent(name)
-    game = SnakeGameAI(20)
+    game = SnakeGameAI(200)
     while True:
         # get old state
         state_old = agent.get_state(game)
@@ -125,12 +123,9 @@ def train(aiVersion='model/model1100.pth'):
         agent.remember(state_old, final_move, reward, state_new, game_over)
 
         if game_over:
-            
-            game.reset()
-            agent.n_games += 1
-            agent.train_long_memory()
-
+            game_human.playGame(score)
             print('Game', agent.n_games, 'Score', score, 'Record:', record)
+            game.quitGame()
 
 if __name__ == '__main__':
     train()

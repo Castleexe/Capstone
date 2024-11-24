@@ -29,3 +29,11 @@ while True:
 
 # Close the window
 window.close()
+
+def showScores(humanScore, Aiscore):
+    if humanScore > Aiscore:
+        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n You Win! ")
+    else: 
+        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n Ai Wins :( ")
+    
+    

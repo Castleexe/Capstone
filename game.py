@@ -69,7 +69,11 @@ class SnakeGameAI:
         self.food = Point(x, y)
         if self.food in self.snake:
             self._place_food()
-        
+
+    def quitGame(self):
+        pygame.quit()
+        quit()
+
     def play_step(self, action):
         self.frame_interation += 1
         # 1. collect user input

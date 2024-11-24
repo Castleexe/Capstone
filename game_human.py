@@ -3,6 +3,7 @@ import random
 from enum import Enum
 from collections import namedtuple
 from time import sleep
+import PySimpleGUI as sg
 
 pygame.init()
 #font = pygame.font.Font('arial.ttf', 25)
@@ -31,6 +32,7 @@ class SnakeGame:
     def __init__(self, AIscore=100, w=640, h=480):
         self.w = w
         self.h = h
+        self.AIscore = AIscore
         # init display
         self.display = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption('Snake')
@@ -114,7 +116,7 @@ class SnakeGame:
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
         
         text = font.render("Score: " + str(self.score), True, WHITE)
-        aiScore = font.render("SCORE TO BEAT: " + "100", True, WHITE)
+        aiScore = font.render("SCORE TO BEAT: " + str(self.AIscore), True, WHITE)
         self.display.blit(text, [0, 0])
         self.display.blit(aiScore, [100, 0])
         pygame.display.flip()
@@ -135,16 +137,25 @@ class SnakeGame:
             
 def playGame(AIscore):
     game = SnakeGame(AIscore)
-    
+    first = True
     # game loop
     while True:
         game_over, score = game.play_step()
-        
+        if (first):
+            sleep(3)
+        first = False
         if game_over == True:
+            showScores(score, AIscore)
             break
         
     print('Final Score', score)
 
+def showScores(humanScore, Aiscore):
+    if humanScore > Aiscore:
+        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n You Win! ")
+    else: 
+        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n Ai Wins :( ")
+'''
 if __name__ == '__main__':
     game = SnakeGame()
     first = True
@@ -161,3 +172,4 @@ if __name__ == '__main__':
         
         
     pygame.quit()
+'''
