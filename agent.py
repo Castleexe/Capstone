@@ -128,6 +128,11 @@ def train():
             agent.n_games += 1
             agent.train_long_memory()
 
+            if agent.n_games % 100 == 0:
+                name = "model" + str(agent.n_games) + ".pth"
+                agent.model.save(name)
+
+
             if score > record:
                 record = score
                 agent.model.save()
