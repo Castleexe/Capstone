@@ -2,6 +2,7 @@ import pygame
 import random
 from enum import Enum
 from collections import namedtuple
+from time import sleep
 
 pygame.init()
 #font = pygame.font.Font('arial.ttf', 25)
@@ -27,7 +28,7 @@ SPEED = 20
 
 class SnakeGame:
     
-    def __init__(self, w=640, h=480):
+    def __init__(self, AIscore=100, w=640, h=480):
         self.w = w
         self.h = h
         # init display
@@ -54,22 +55,22 @@ class SnakeGame:
         if self.food in self.snake:
             self._place_food()
         
-    def play_step(self):
+    def play_step(self, first=False):
         # 1. collect user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT and self.direction is not Direction.RIGHT:
                     self.direction = Direction.LEFT
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT and self.direction is not Direction.LEFT:
                     self.direction = Direction.RIGHT
-                elif event.key == pygame.K_UP:
+                elif event.key == pygame.K_UP and self.direction is not Direction.DOWN:
                     self.direction = Direction.UP
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN and self.direction is not Direction.UP:
                     self.direction = Direction.DOWN
-        
+       
         # 2. move
         self._move(self.direction) # update the head
         self.snake.insert(0, self.head)
@@ -113,7 +114,9 @@ class SnakeGame:
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
         
         text = font.render("Score: " + str(self.score), True, WHITE)
+        aiScore = font.render("SCORE TO BEAT: " + "100", True, WHITE)
         self.display.blit(text, [0, 0])
+        self.display.blit(aiScore, [100, 0])
         pygame.display.flip()
         
     def _move(self, direction):
@@ -130,14 +133,27 @@ class SnakeGame:
             
         self.head = Point(x, y)
             
-
-if __name__ == '__main__':
-    game = SnakeGame()
+def playGame(AIscore):
+    game = SnakeGame(AIscore)
     
     # game loop
     while True:
         game_over, score = game.play_step()
         
+        if game_over == True:
+            break
+        
+    print('Final Score', score)
+
+if __name__ == '__main__':
+    game = SnakeGame()
+    first = True
+    # game loop
+    while True:
+        game_over, score = game.play_step(first)
+        if (first):
+            sleep(3)
+        first = False
         if game_over == True:
             break
         

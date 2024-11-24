@@ -11,14 +11,14 @@ BATCH_SIZE = 1000
 LR = 0.001
 
 class Agent:
-    def __init__(self):
+    def __init__(self, name):
         self.n_games = 0 #number of games
         self.epsilon = 0 #randomness
         self.gamma = 0.9 #discount rate  must be samller than 1 
         self.memory = deque(maxlen=MAX_MEMORY) #popleft() automatically remove elements if memory full
         self.model = Linear_QNet(11,256, 3) #11 states, output 3 because action diretion
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
-        self.model.load_state_dict(torch.load('model/model1100.pth'))
+        self.model.load_state_dict(torch.load(name))
 
 
     def get_state(self, game):
@@ -99,12 +99,13 @@ class Agent:
 
         return final_move
 
-def train():
+def train(aiVersion='model/model1100.pth'):
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
     record = 0
-    agent = Agent()
+    name = "model/model" + aiVersion + ".pth"
+    agent = Agent(name)
     game = SnakeGameAI(20)
     while True:
         # get old state
@@ -124,7 +125,7 @@ def train():
         agent.remember(state_old, final_move, reward, state_new, game_over)
 
         if game_over:
-            # train long memory, plot results
+            
             game.reset()
             agent.n_games += 1
             agent.train_long_memory()
