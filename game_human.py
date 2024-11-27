@@ -25,7 +25,7 @@ BLUE2 = (0, 100, 255)
 BLACK = (0,0,0)
 
 BLOCK_SIZE = 20
-SPEED = 20
+SPEED = 10
 
 class SnakeGame:
     
@@ -154,7 +154,8 @@ def showScores(humanScore, Aiscore):
     if humanScore > Aiscore:
         sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n You Win! ")
     else: 
-        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n Ai Wins :( ")
+        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n Ai Wins :( ", font=28)
+
 '''
 if __name__ == '__main__':
     game = SnakeGame()

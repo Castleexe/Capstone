@@ -6,13 +6,15 @@ options = [f"{i * 100} games" for i in range(1, 12)]
 
 # Define the layout of the GUI
 layout = [
+    [sg.VPush()],
     [sg.Text("Select AI version:", size=(20, 1), justification='center')],
     [sg.Combo(options, default_value=options[0], key='-DROPDOWN-', size=(20, 1))],
-    [sg.Button("Select"), sg.Exit()]
+    [sg.Button("Select"), sg.Exit()],
+    [sg.VPush()]
 ]
 
 # Create the window
-window = sg.Window("AI selection", layout, element_justification='center')
+window = sg.Window("AI selection", layout, element_justification='center', size=(400,400), font=28)
 
 # Event loop
 while True:
@@ -30,10 +32,3 @@ while True:
 # Close the window
 window.close()
 
-def showScores(humanScore, Aiscore):
-    if humanScore > Aiscore:
-        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n You Win! ")
-    else: 
-        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n Ai Wins :( ")
-    
-    

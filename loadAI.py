@@ -103,6 +103,7 @@ class Agent:
 def train(aiVersion='model/model1100.pth'):
     record = 0
     name = "model/model" + aiVersion + ".pth"
+    print(name)
     agent = Agent(name)
     game = SnakeGameAI(200)
     while True:
