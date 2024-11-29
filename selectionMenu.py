@@ -7,7 +7,7 @@ options = [f"{i * 100} games" for i in range(1, 12)]
 # Define the layout of the GUI
 layout = [
     [sg.VPush()],
-    [sg.Text("Select AI version:", size=(20, 1), justification='center')],
+    [sg.Text("Select AI played amount:", size=(20, 1), justification='center')],
     [sg.Combo(options, default_value=options[0], key='-DROPDOWN-', size=(20, 1))],
     [sg.Button("Select"), sg.Exit()],
     [sg.VPush()]
