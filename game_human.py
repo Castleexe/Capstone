@@ -142,7 +142,7 @@ def playGame(AIscore):
     while True:
         game_over, score = game.play_step()
         if (first):
-            sleep(3)
+            timer(3)
         first = False
         if game_over == True:
             showScores(score, AIscore)
@@ -150,6 +150,15 @@ def playGame(AIscore):
         
     print('Final Score', score)
 
+def timer(duration):
+    layout = [[sg.Text("", size=(10), justification="center", font=("Helvetica", 48), key="-TIMER-")]]
+    window = sg.Window("Countdown Timer", layout, element_justification="center", finalize=True, no_titlebar=True)
+    for remaining_time in range(duration, -1, -1):
+            window["-TIMER-"].update(f"{remaining_time}")
+            window.refresh()
+            sleep(1)
+    window.close()
+    
 def showScores(humanScore, Aiscore):
     if humanScore > Aiscore:
         sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n You Win! ")

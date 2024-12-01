@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import loadAI
+import time
 
 # Define the options for the dropdown
 options = [f"{i * 100} games" for i in range(1, 12)]
@@ -27,8 +28,6 @@ while True:
         n = option.split()
         games = n[0]
         loadAI.train(games)
-
-
 # Close the window
 window.close()
 
