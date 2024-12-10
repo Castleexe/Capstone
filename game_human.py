@@ -23,6 +23,7 @@ RED = (200,0,0)
 BLUE1 = (0, 0, 255)
 BLUE2 = (0, 100, 255)
 BLACK = (0,0,0)
+GREEN = (141, 173, 2)
 
 BLOCK_SIZE = 20
 SPEED = 10
@@ -38,6 +39,24 @@ class SnakeGame:
         pygame.display.set_caption('Snake')
         self.clock = pygame.time.Clock()
         
+        # Load images
+        self.assets = {
+            'apple': pygame.transform.scale(pygame.image.load('assets/apple.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'head_up': pygame.transform.scale(pygame.image.load('assets/head_up.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'head_down': pygame.transform.scale(pygame.image.load('assets/head_down.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'head_left': pygame.transform.scale(pygame.image.load('assets/head_left.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'head_right': pygame.transform.scale(pygame.image.load('assets/head_right.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'body_vertical': pygame.transform.scale(pygame.image.load('assets/body_vertical.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'body_horizontal': pygame.transform.scale(pygame.image.load('assets/body_horizontal.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'body_topleft': pygame.transform.scale(pygame.image.load('assets/body_topleft.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'body_topright': pygame.transform.scale(pygame.image.load('assets/body_topright.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'body_bottomleft': pygame.transform.scale(pygame.image.load('assets/body_bottomleft.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'body_bottomright': pygame.transform.scale(pygame.image.load('assets/body_bottomright.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'tail_up': pygame.transform.scale(pygame.image.load('assets/tail_up.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'tail_down': pygame.transform.scale(pygame.image.load('assets/tail_down.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'tail_left': pygame.transform.scale(pygame.image.load('assets/tail_left.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+            'tail_right': pygame.transform.scale(pygame.image.load('assets/tail_right.png'), (BLOCK_SIZE, BLOCK_SIZE)),
+        }
         # init game state
         self.direction = Direction.RIGHT
         
@@ -107,16 +126,52 @@ class SnakeGame:
         return False
         
     def _update_ui(self):
-        self.display.fill(BLACK)
+        self.display.fill(GREEN)
         
-        for pt in self.snake:
-            pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-            pygame.draw.rect(self.display, BLUE2, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
-            
-        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        # Draw the food
+        self.display.blit(self.assets['apple'], pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        
+        # Draw the snake
+        for i, pt in enumerate(self.snake):
+            if i == 0:  # Head
+                if self.direction == Direction.UP:
+                    image = self.assets['head_up']
+                elif self.direction == Direction.DOWN:
+                    image = self.assets['head_down']
+                elif self.direction == Direction.LEFT:
+                    image = self.assets['head_left']
+                else:  # RIGHT
+                    image = self.assets['head_right']
+            elif i == len(self.snake) - 1:  # Tail
+                prev = self.snake[i - 1]
+                if pt.y < prev.y:  # Moving up
+                    image = self.assets['tail_up']
+                elif pt.y > prev.y:  # Moving down
+                    image = self.assets['tail_down']
+                elif pt.x < prev.x:  # Moving left
+                    image = self.assets['tail_left']
+                else:  # Moving right
+                    image = self.assets['tail_right']
+            else:  # Body
+                prev = self.snake[i - 1]
+                next_pt = self.snake[i + 1]
+                if prev.x == next_pt.x:  # Vertical
+                    image = self.assets['body_vertical']
+                elif prev.y == next_pt.y:  # Horizontal
+                    image = self.assets['body_horizontal']
+                elif (prev.x < pt.x and next_pt.y < pt.y) or (prev.y < pt.y and next_pt.x < pt.x):  # Top-left corner
+                    image = self.assets['body_topleft']
+                elif (prev.x > pt.x and next_pt.y < pt.y) or (prev.y < pt.y and next_pt.x > pt.x):  # Top-right corner
+                    image = self.assets['body_topright']
+                elif (prev.x < pt.x and next_pt.y > pt.y) or (prev.y > pt.y and next_pt.x < pt.x):  # Bottom-left corner
+                    image = self.assets['body_bottomleft']
+                else:  # Bottom-right corner
+                    image = self.assets['body_bottomright']
+            self.display.blit(image, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
         
         text = font.render("Score: " + str(self.score), True, WHITE)
         aiScore = font.render("SCORE TO BEAT: " + str(self.AIscore), True, WHITE)
+        
         self.display.blit(text, [0, 0])
         self.display.blit(aiScore, [100, 0])
         pygame.display.flip()
