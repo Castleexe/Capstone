@@ -2,7 +2,7 @@ import pygame
 import random
 from enum import Enum
 from collections import namedtuple
-from time import sleep
+import time 
 import PySimpleGUI as sg
 
 pygame.init()
@@ -28,12 +28,15 @@ GREEN = (141, 173, 2)
 BLOCK_SIZE = 20
 SPEED = 10
 
+
 class SnakeGame:
     
-    def __init__(self, AIscore=100, w=640, h=480):
+    def __init__(self, AIscore=100, timeRemaining=30 ,w=640, h=480):
         self.w = w
         self.h = h
         self.AIscore = AIscore
+        self.timeRemaining = timeRemaining * 4
+        self.prevTime = time.time()
         # init display
         self.display = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption('Snake')
@@ -95,10 +98,15 @@ class SnakeGame:
         # 2. move
         self._move(self.direction) # update the head
         self.snake.insert(0, self.head)
-        
+
+        currentTime = time.time()
+        if (currentTime - self.prevTime >= 1):
+            self.timeRemaining -= 1
+            self.prevTime = time.time()
+
         # 3. check if game over
         game_over = False
-        if self._is_collision():
+        if self._is_collision() or self.timeRemaining <= 0:
             game_over = True
             return game_over, self.score
             
@@ -114,7 +122,7 @@ class SnakeGame:
         self.clock.tick(SPEED)
         # 6. return game over and score
         return game_over, self.score
-    
+
     def _is_collision(self):
         # hits boundary
         if self.head.x > self.w - BLOCK_SIZE or self.head.x < 0 or self.head.y > self.h - BLOCK_SIZE or self.head.y < 0:
@@ -168,12 +176,14 @@ class SnakeGame:
                 else:  # Bottom-right corner
                     image = self.assets['body_bottomright']
             self.display.blit(image, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-        
+                
         text = font.render("Score: " + str(self.score), True, WHITE)
         aiScore = font.render("SCORE TO BEAT: " + str(self.AIscore), True, WHITE)
+        timeLeft = font.render("Time remaining: " + str(round(self.timeRemaining)) + " Seconds", True, RED)
         
         self.display.blit(text, [0, 0])
         self.display.blit(aiScore, [100, 0])
+        self.display.blit(timeLeft, [350, 0])
         pygame.display.flip()
         
     def _move(self, direction):
@@ -190,8 +200,8 @@ class SnakeGame:
             
         self.head = Point(x, y)
             
-def playGame(AIscore):
-    game = SnakeGame(AIscore)
+def playGame(AIscore, timeTaken):
+    game = SnakeGame(AIscore, timeTaken)
     first = True
     # game loop
     while True:
@@ -211,14 +221,14 @@ def timer(duration):
     for remaining_time in range(duration, -1, -1):
             window["-TIMER-"].update(f"{remaining_time}")
             window.refresh()
-            sleep(1)
+            time.sleep(1)
     window.close()
     
 def showScores(humanScore, Aiscore):
     if humanScore > Aiscore:
-        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n You Win! ")
+        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \nYou Win! ",font=50)
     else: 
-        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \n Ai Wins :( ", font=28)
+        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \nAi Wins :( ", font=50)
 
 '''
 if __name__ == '__main__':

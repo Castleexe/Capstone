@@ -3,7 +3,7 @@ import loadAI
 import time
 
 # Define the options for the dropdown
-options = [f"{i * 100} games" for i in range(1, 12)]
+options = [f"{i * 100} games" for i in range(1, 11)]
 
 # Define the layout of the GUI
 layout = [

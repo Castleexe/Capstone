@@ -6,6 +6,7 @@ from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from helper import plot
 import game_human
+import time
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -101,11 +102,12 @@ class Agent:
         return final_move
 
 def train(aiVersion='model/model1100.pth'):
+    startTime = time.time()
     record = 0
     name = "model/model" + aiVersion + ".pth"
     print(name)
     agent = Agent(name)
-    game = SnakeGameAI(200)
+    game = SnakeGameAI(30)
     while True:
         # get old state
         state_old = agent.get_state(game)
@@ -124,7 +126,9 @@ def train(aiVersion='model/model1100.pth'):
         agent.remember(state_old, final_move, reward, state_new, game_over)
 
         if game_over:
-            game_human.playGame(score)
+            endTime = time.time()
+            timeTaken = endTime - startTime
+            game_human.playGame(score, timeTaken)
             print('Game', agent.n_games, 'Score', score, 'Record:', record)
             game.quitGame()
 
