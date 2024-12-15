@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 import loadAI
-import time
 
 # Define the options for the dropdown
 options = [f"{i * 100} games" for i in range(1, 11)]
