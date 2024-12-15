@@ -4,6 +4,8 @@ from enum import Enum
 from collections import namedtuple
 import time 
 import PySimpleGUI as sg
+import os
+import sys
 
 pygame.init()
 #font = pygame.font.Font('arial.ttf', 25)
@@ -225,26 +227,20 @@ def timer(duration):
     window.close()
     
 def showScores(humanScore, Aiscore):
-    if humanScore > Aiscore:
-        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \nYou Win! ",font=50)
-    else: 
-        sg.popup(f"Your score: {humanScore}, AI score {Aiscore} \nAi Wins :( ", font=50)
-
-'''
-if __name__ == '__main__':
-    game = SnakeGame()
-    first = True
-    # game loop
+    layout = [
+        [sg.Text(f"Your score: {humanScore}, AI score {Aiscore}", font=50)],
+        [sg.Button("Restart"), sg.Button("Exit")]
+    ]
+    window = sg.Window("Game Over", layout, element_justification='center', finalize=True)
+    
     while True:
-        game_over, score = game.play_step(first)
-        if (first):
-            sleep(3)
-        first = False
-        if game_over == True:
-            break
-        
-    print('Final Score', score)
-        
-        
-    pygame.quit()
-'''
+        event, values = window.read()
+        if event in (sg.WINDOW_CLOSED, 'Exit'):
+            window.close()
+            pygame.quit()
+            sys.exit()
+        elif event == "Restart":
+            window.close()
+            pygame.quit()
+            #Replace current process with new process
+            os.execl(sys.executable, sys.executable, "selectionMenu.py")
